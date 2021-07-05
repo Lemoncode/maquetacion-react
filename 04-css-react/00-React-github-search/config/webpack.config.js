@@ -17,7 +17,7 @@ module.exports = {
 	},
 	entry: {
 		app: ["regenerator-runtime/runtime", "./index.tsx"],
-		appStyles: ["./styles/styles.css", "./scenes/members-scene.styles.css"],
+		// appStyles: ["./styles/styles.css", "./scenes/members-scene.styles.css"],
 	},
 	module: {
 		rules: [

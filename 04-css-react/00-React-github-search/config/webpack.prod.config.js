@@ -9,7 +9,7 @@ module.exports = merge(base, {
 	output: {
 		path: helpers.resolveFromRootPath("dist"),
 		filename: "js/[name].[chunkhash].js",
-		assetModuleFilename: "images/[hash][ext][query]",
+		assetModuleFilename: "assets/[hash][ext][query]",
 	},
 	module: {
 		rules: [
@@ -23,7 +23,7 @@ module.exports = merge(base, {
 						options: {
 							modules: {
 								exportLocalsConvention: "camelCase",
-								localIdentName: "css/[path][name]__[local]--[hash:base64:5]",
+								localIdentName: "css/[name]__[local]--[hash:base64:5]",
 								localIdentContext: helpers.resolveFromRootPath("src"),
 								localIdentHashPrefix: "my-custom-hash",
 							},
