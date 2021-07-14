@@ -1,8 +1,6 @@
-## Custom CSS
+# CSS React
 
 ---
-
-En esta sección vamos a ver cómo crear y utilizar hojas de estilos css personalizadas.
 
 Para este y otros ejemplos vamos a utilizar como editor de código [VS-Code](https://code.visualstudio.com/).
 
@@ -10,7 +8,7 @@ El repositorio sobre el que vamos a trabajar y que tenemos que clonarnos.
 
 > https://github.com/juanpms2/4_React_GitHub_Searcher.git
 
-Hacemos un `npm install` desde el directorio raíz.
+Una vez clonado, hacemos un `npm install` desde el directorio raíz.
 
 Y arrancamos el proyecto con `npm start`.
 
@@ -20,19 +18,23 @@ Y arrancamos el proyecto con `npm start`.
 >
 > Es un proyecto ya montado y funcionando pero supongamos que nos han pedido que hagamos unas modificaciones.
 > Todabía no sabemos manejar los estilos que el proyecto tiene implementados con lo que no los tocaremos.
-> Empezaremos trabajando con lo que conocemos; hojas de estilos css.
+> Iremos viendo diferentes formas de implementar y añadir estilos al proyecto.
 
 Como maquetadores nos deberían proporcionar la infraestructura de bundling (empaquetado) ya montada con todo lo necesario para poder trabajar y solo tener que preocuparnos de hacer las importaciones de nuestros estilos para poder utilizarlos.
 Webpack es una parte delicada y que no deberíamos tocar salvo que sepamos lo que estamos haciendo.
 Vamos a ver varias opciones de cómo utilizar nuestros estilos y en todas ellas es necesaria una configuración e instalación de dependencias que serán las encargadas de que todo funcione.
 
+## Custom CSS
+
 ---
 
-## A los teclados!!
+En esta sección vamos a ver cómo crear y utilizar hojas de estilos css personalizadas.
 
 Lo primero será comprobar que tenemos las dependencias necesarias instaladas en nuestro proyecto. Para ello revisamos el archivo `package.json` que es quien tiene definidas las dependencias que se instalarán al hacer un `npm install` desde la consola.
 
 Por ahora necesitamos tener instalados los loaders `style-loader` y `css-loader` que serán los encargados de manejar nuestros estilos.
+
+Podemos instalarlos con `npm install css-loader styles-loader --save-dev` .
 
 **package.json**
 
@@ -81,7 +83,7 @@ Vamos a empezar creando un directorio dentro de la carpeta `src` que llamaremos 
 +   }
 ```
 
-Ya tenemos nuestra hoja de estilos, pero, ¿cómo la utilizamos?...Vamos a ver varias opciones y en todas ellas es necesaria una configuración e instalación de dependencias que serán las encargadas de que todo funcione.
+Ya tenemos nuestra hoja de estilos, pero, ¿cómo la utilizamos?...
 
 #### Opción 1 (no recomendada)
 
@@ -96,7 +98,7 @@ entry: {
 },
 ```
 
-En la propiedad `entry` iremos incluyendo las rutas a nuestras hojas de estilos. Lo que hace webpack al generar el bundle es incluir en el `<head>` del `index.html` una etiqueta `<style>...</style>` con las reglas definidas. Se crea una nueva etiqueta por cada hoja de estilos, con lo que debemos tener especial cuidado y tener presente la especificidad y la cascada de estilos. Esto mismo es lo que hará en las diferentes formas que veremos.
+En la propiedad `entry` iremos incluyendo las rutas a nuestras hojas de estilos.
 
 Ahora vamos a crear una nueva hoja de estilos pero esta vez será específica (o debería) para un componente.
 
@@ -118,33 +120,32 @@ entry: {
 },
 ```
 
-¿Es este el comportamiento que esperábamos?...¿Qué ocurre si cambiamos el orden en el punto de entrada de webpack?, miremos en el inspector del navegador cómo se han cargado los estilos... exacto!! el orden en la declaración importa.
+¿Es este el comportamiento que esperábamos?...¿Qué ocurre si cambiamos el orden en el punto de entrada de webpack?, miremos en el inspector del navegador cómo se han cargado los estilos.
 
-> **Este es el principal problema si no tenemos definina una buena metodología a la hora de nobrar nuestras clases.**
+Lo que hace webpack al generar el bundle es incluir en el `<head>` del `index.html` una etiqueta `<style>...</style>` con las reglas definidas. Se crea una nueva etiqueta por cada hoja de estilos, con lo que debemos tener especial cuidado y tener presente la especificidad y la cascada de estilos. El orden en la declaración importa.
 
 - **Ventajas**
   - Un único punto de entrada donde definir las hojas de estilos.
   - Es fácil controlar el orden de carga para controlar la cascada y la especificidad.
 - **Inconvenientes**
   - Será necesario o muy recomendable utilizar una metodología tipo **BEM** en el nombrado de clases para evitar colisiones.
-  - Tenemos que parar y volver a arrancar el servidor cada vez que modificamos `webpack.config`
+  - Tenemos que parar y volver a arrancar el servidor cada vez que modificamos la configuración de **webpack**.
   - Las rutas pueden llegar a tener mucha profundidad y hacerse complicadas en función de dónde esté definida la hoja de estilos `./pods/header-component/components/avatar-component/avatar-component.styles.css`
 
 > **Recordar que al tratarse de una aplicación en React solo tenemos un único punto de entrada que es `index.html`**
 
 #### Opción 2
 
-Otra opción para cargar nuestro estilos es importarlos en nuestro `index.tsx`, la carga es similar a la anterior y seguiremos teniendo en cuenta la especificidad y la cascada de estilos.
-
-# // TODO......
-
-Si observamos en el navegador.....
+Otra opción para cargar nuestro estilos es importarlos en nuestro `index.tsx`.
 
 **index.tsx**
 
 ```diff
-+   import globalClass './styles/styles.css'
++	import './styles/styles.css',
++	import  "./styles/other-styles.css";
 ```
+
+Si observamos en el navegador vemos que la carga es similar a la anterior y seguiremos teniendo en cuenta la especificidad y la cascada de estilos.
 
 - **Ventajas**
   - Un único punto de entrada donde definir las hojas de estilos.
@@ -152,18 +153,23 @@ Si observamos en el navegador.....
   - No es necesario reiniciar el servidor.
   - Si está configurado, el refresh es automático.
 - **Inconvenientes**
+  - Será necesario o muy recomendable utilizar una metodología tipo **BEM** en el nombrado de clases para evitar colisiones.
   - No se está aislando por componente.
   - Las rutas pueden llegar a tener mucha profundidad y hacerse complicadas en función de dónde esté definida la hoja de estilos `./pods/header-component/components/avatar-component/avatar-component.styles.css`
 
-#### Opción 3
+#### Opción 3 (recomendable)
 
-Tenemos una tercera opción que es crear una hoja de estilos por cada componente y hacer la importación como hemos visto anteriormente pero de manera individual. Esta sería la forma recomendada y la aproximación más cercana a lo que sería la componentización, ya que estaríamos aislando el componente junto con sus estilos.
+Tenemos una tercera opción que es crear una hoja de estilos por cada componente y hacer la importación como hemos visto anteriormente pero de manera individual.
 
-**my-component.tsx**
+Vamos a dejar cargada la hoja de estilos principal en `index.tsx` y a nuestro componente le vamos a incluir la suya propia. Observemos qué pasa... si nos fijamos en el navegador vemos que primero carga los estilos específicos del componente, seguido la hoja de estilos principal, con lo que en caso de conflicto sobrescribirá los estilos del componente.
+
+**members-scene.tsx**
 
 ```diff
-+   import innerClass './.styles.css'
++   import './members-scene.styles.css'
 ```
+
+Esta sería la forma recomendada y la aproximación más cercana a lo que es la componentización, ya que estaríamos aislando el componente junto con sus estilos.
 
 - **Ventajas**
   - Componentes aislados.
@@ -172,14 +178,81 @@ Tenemos una tercera opción que es crear una hoja de estilos por cada componente
   - Si está configurado, el refresh es automático.
 - **Inconvenientes**
   - No se puede controlar el orden de carga.
-  - Es necesario o recomendable aplicar metodologías como BEM para evitar conflictos de reglas con otros componentes.
+  - Es necesario o recomendable aplicar metodologías como **BEM** para evitar conflictos de reglas con otros componentes.
 
-Podríamos pensar en una cuarta opción que sería incluir las hojas de estilos de "manera tradicional" en el `index.html` con la etiqueta `<link>`. Esto no tiene mucho sentido si conocemos la funcionalidad de webpack que en este caso es la de empaquetar y procesar todos nuestro estilos en un único archivo css. Si utilizásemos esta formula tendríamos que añadir nueva configuración para que en vez de procesar, copiase esos archivos en la ruta correcta para que puedan ser utilizados. Veremos un ejemplo similar con imágenes.
+## CSS Modules
 
+---
+
+Como hemos visto para conseguir unos componentes aislados cada uno tiene su propia hoja de estilos.
+
+Ya sabemos cómo utilizar nuestros estilos pero el principal problema que nos encontramos es la colisión de clases si no utilizamos una buena metodología a la hora de nombrarlas. Estas metodologías pueden resultar tediosas y tampoco nos libran al 100% de las colisiones, sobre todo en proyectos grandes.
+
+¿Y si pudiésemos automatizar esta tarea?
+
+#### CSS modules al rescate.
+
+¿Qué es **CSS modules**? CSS Modules son archivos CSS que, con la ayuda de bundlers como **Webpack** nos permiten escribir estilos que luego se convertirán en nobres de clase únicos. Están compuestos por: nombre de archivo, nombre de clase y un hash aleatorio. Este nombre lo genera de manera automática el bundler tomando como hemos dicho el nombre de la clase que hayamos declarado y agregando el nombre del componente junto con el hash auto-generado. Esto nos permitirá aislarnos del resto de la aplicación a la hora de trabajar en nuestros elementos o componentes ya que cada nombre será único y específico de ese módulo.
+
+La configuración en **Webpack** es sencilla. Los loaders que utilizaremos son los mismos `style-loader` y `css-loader`, simplemente se añade una configuración extra:
+
+```diff
+use: [
+  "style-loader",
+-  "css-loader",
++  {
++    loader: "css-loader",
++    options: {
++      modules: true,
++    },
++  },
+],
 ```
-Assuming you are on Webpack 4, you have two options:
 
-    Upgrade to webpack@5.x, which copy-webpack-plugin@8.x supports.
-    Downgrade to copy-webpack-plugin@6.x, which is the last version that supports webpack@4.x.
+Importamos nuestros estilos en el componente pero ahora de manera nombrada.
 
+```diff
++	import innerClasses from './members-scene.styles.css';
 ```
+
+Y utilizamos nuestra clase de la siguiente manera
+
+```diff
+<AppLayout>
+-	<div className="backgroundColor">
++	<div className={innerClasses.backgroundColor}>
+		<div className={classes.root}>
+			<BarTitleComponent />
+			<MembersCollectionContainer />
+		</div>
+	</div>
+</AppLayout>
+```
+
+Veamos en el navegador desde el inspector cómo queda nombrada la clase.
+
+Esta configuración sería suficiente pero vamos a definirla un poco más para tener un mayor control.
+A la hora de nombrar las clases por convención se recomienda utilizar sintaxis `camelCase` ya que si utilizamos por ejemplo `kebab-case` y no tenemos la configuración siguiente tendríamos que añadir las clases utilizando corchetes `classes["mi-clase-kebab-case"]` en vez de `classes.miClaseCamelCase` que es más cómoda de utilizar.
+
+```diff
+use: [
+		"style-loader",
+		{
+			loader: "css-loader",
+			options: {
+-				modules: true,
++				modules: {
++					exportLocalsConvention: "camelCase",
++					localIdentName: "[path][name]__[local]--[hash:base64:5]",
++					localIdentContext: helpers.resolveFromRootPath("src"),
++				},
+			},
+		},
+	],
+```
+
+Volvemos a comprobar cómo queda el nombrado desde el inspector del navegador.
+
+Acabamos de ver cómo **CSS modules** resuelve todos los problemas e inconvenientes que nos habíamos encontrado a la hora de utilizar nuestros estilos CSS. Ahora nuestros componentes son más independientes, para importar una hoja de estilos solo tenemos que tocar el componente, utilizarlos sigue siendo sencillo y además ya no tenemos la preocupación de colisión de clases.
+
+Y si en vez de **CSS** queremos algo un poco más potetente como puede ser **SASS**....
