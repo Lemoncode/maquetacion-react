@@ -255,4 +255,122 @@ Volvemos a comprobar cómo queda el nombrado desde el inspector del navegador.
 
 Acabamos de ver cómo **CSS modules** resuelve todos los problemas e inconvenientes que nos habíamos encontrado a la hora de utilizar nuestros estilos CSS. Ahora nuestros componentes son más independientes, para importar una hoja de estilos solo tenemos que tocar el componente, utilizarlos sigue siendo sencillo y además ya no tenemos la preocupación de colisión de clases.
 
-Y si en vez de **CSS** queremos algo un poco más potetente como puede ser **SASS**....
+## SASS
+
+---
+
+Hasta ahora hemos visto como utilizar archivos **CSS** de "manera simple" y utilizando **CSS-modules**.
+
+Ahora veremos cómo utilizar un preprocesador CSS como **SASS**. Para ello seguimos los siguientes pasos:
+
+- Añadimos la extensión `.scss` al archivo `global-types.d.ts` para poder realizar el `import` de nuestra hoja de estilos.
+
+  ```diff
+  	declare module "*.jpg";
+  	declare module "*.png";
+  	declare module "*.svg";
+  	declare module "*.css";
+  +	declare module "*.scss";
+  ```
+
+- Renombramos los archivos `.css` a `.scss`
+- Instalamos **sass** y **sass-loader**: `npm install sass sass-loader --save-dev`
+- Y por último añadimos la configuración necesaria a **webpack** para que todo funcione.
+
+Los pasos que debemos seguir para utilizar nuestros estilos SASS son los mismos que vimos con CSS.
+
+Si no vamos a utilizar **CSS-modules** encontraríamos una configuración similar a esta en el webpack.config:
+
+**webpack-dev.config.js**
+
+```diff
+module: {
+		rules: [
++			{
++				test: /\.scss$/,
++				exclude: /node_modules/,
++				use: [
++					"style-loader",
++					"css-loader",
++					{
++						loader: "sass-loader",
++						options: {
++							implementation: require("sass"),
++						},
++					},
++				],
++			},
+			{
+				test: /\.css$/,
+
+				use: [
+					"style-loader",
+					{
+						loader: "css-loader",
+						options: {
+							modules: {
+								exportLocalsConvention: "camelCase",
+								localIdentName: "[path][name]__[local]--[hash:base64:5]",
+								localIdentContext: helpers.resolveFromRootPath("src"),
+							},
+						},
+					},
+				],
+			},
+		],
+	},
+```
+
+Si por el contrario decidimos utilizar (ya hemos visto sus ventajas) **CSS-modules** tenemos que añadir configuración extra:
+
+**webpack-dev.config.js**
+
+```diff
+module: {
+		rules: [
+			{
+				test: /\.scss$/,
+				exclude: /node_modules/,
+				use: [
+					"style-loader",
+-					"css-loader",
++					{
++						loader: "css-loader",
++						options: {
++							modules: {
++								exportLocalsConvention: "camelCase",
++								localIdentName: "[path][name]__[local]",
++								localIdentContext: helpers.resolveFromRootPath+("src"),
++							},
++						},
++					},
+					{
+						loader: "sass-loader",
+						options: {
+							implementation: require("sass"),
+						},
+					},
+				],
+			},
+			{
+				test: /\.css$/,
+
+				use: [
+					"style-loader",
+					{
+						loader: "css-loader",
+						options: {
+							modules: {
+								exportLocalsConvention: "camelCase",
+								localIdentName: "[path][name]__[local]--[hash:base64:5]",
+								localIdentContext: helpers.resolveFromRootPath("src"),
+							},
+						},
+					},
+				],
+			},
+		],
+	},
+```
+
+> Como vemos la implementación de la configuración es muy similar a CSS y la utilización de los estilos es idéntica, con lo que podemos seguir los pasos indicados en los ejemplos con **CSS** para probar nuestros estilos **SASS**.

@@ -3,8 +3,7 @@ import clsx from "clsx";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { AppLayout } from "layout";
 import { BarTitleComponent, MembersCollectionContainer } from "pods";
-import innerClasses from "./members-scene.styles.css";
-// import "./members-scene.styles.css";
+import innerClasses from "./members-scene.styles.scss";
 
 const useStyles = makeStyles(
 	(theme) => ({
